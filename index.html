@@ -321,16 +321,7 @@
             .emp-input-row input { min-width: 100%; }
         }
 
-        /* إخفاء عناصر واجهة الماسح الضوئي غير المرغوب فيها */
-        #reader__dashboard_section_swaplink,
-        #reader__dashboard_section_csr,
-        #reader__dashboard_section_stop {
-        display: none !important;
-        }
-        /* إخفاء قائمة اختيار الكاميرا */
-        #reader__camera_selection {
-        display: none !important;
-        }
+       
     </style>
 </head>
 <body>
@@ -937,9 +928,33 @@
             const table = document.getElementById('employeeTable').querySelector('tbody');
             const row = table.insertRow();
             values.forEach(val => row.insertCell().innerText = val);
-            row.insertCell().innerHTML = `<button class="btn btn-danger" style="padding: 5px 10px;" onclick="removeEmployee(this, '${recordID}')">حذف</button>`;
+            row.insertCell().innerHTML = `
+            <button class="btn btn-warning" style="padding: 5px 10px; margin-left: 5px;" onclick="editEmployee(this, '${recordID}')">تعديل</button>
+            <button class="btn btn-danger" style="padding: 5px 10px;" onclick="removeEmployee(this, '${recordID}')">حذف</button>
+            `;
             fields.forEach(id => document.getElementById(id).value = '');
         }
+
+
+            function editEmployee(btn, recordID) {
+            // 1. البحث عن بيانات الموظف في المصفوفة
+            const emp = employees.find(e => e.key === recordID);
+            if (emp) {
+              // 2. إعادة البيانات إلى حقول الإدخال
+            document.getElementById('empName').value = emp["اسم المستخدم"];
+            document.getElementById('empID').value = emp["الرقم الوظيفي"];
+            document.getElementById('empTitle').value = emp["مسمى الوظيفة"];
+            document.getElementById('empDept').value = emp["وحدة العمل"];
+            document.getElementById('empExt').value = emp["الهاتف"];
+
+            // 3. حذف الموظف القديم (ليتم استبداله عند الضغط على "إضافة" مرة أخرى)
+            removeEmployee(btn, recordID);
+        
+            // 4. تنبيه المستخدم
+            alert("تم نقل البيانات لحقول الإدخال للتعديل. اضغط 'إضافة' بعد الانتهاء.");
+        }
+    }
+
 
         function removeEmployee(btn, recordID) {
             employees = employees.filter(e => e.key !== recordID);
