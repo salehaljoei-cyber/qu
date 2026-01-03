@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام إدارة المرافق الذكي - النسخة النهائية</title>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #3498db;
+            --success: #27ae60;
+            --danger: #e74c4c;
+            --warning: #f39c12;
+            --pink: #fd79a8;
+            --blue: #0984e3;
+            --bg: #f8f9fa;
+            --white: #ffffff;
+            --border: #e1e8ed;
+            --shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--primary);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 40px;
+            font-weight: 800;
+        }
+
+        .main-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            position: relative;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .card-title {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0;
+        }
+
+        .card-title::before {
+            content: '';
+            width: 5px;
+            height: 20px;
+            background: var(--accent);
+            border-radius: 10px;
+        }
+
+        .header-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .badge-item {
+            background: #f1f2f6;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-weight: 800;
+            color: var(--accent);
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-size: 1rem;
+            border: 1px dashed var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .date-text {
+            font-weight: 700;
+            color: #7f8c8d;
+            font-size: 1rem;
+            background: #f1f2f6;
+            padding: 8px 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #576574;
+        }
+
+        input, select, textarea {
+            padding: 14px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 1rem;
+            background: #fff;
+            transition: all 0.3s;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--accent);
+            outline: none;
+        }
+
+        input[readonly] {
+            background-color: #f1f2f6;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .input-with-icon {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-with-icon input {
+            padding-left: 50px;
+        }
+
+        .qr-icon-btn {
+            position: absolute;
+            left: 12px;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--accent);
+            color: white;
+            border-radius: 8px;
+            z-index: 5;
+        }
+
+        .options-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .sub-card {
+            background: #fff;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 15px;
+        }
+
+        .sub-card-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #2d3436;
+            text-align: center;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .radio-item input {
+            display: none;
+        }
+
+        .radio-item label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 12px;
+            background: #f8f9fa;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        
+        .radio-item input:checked + label {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .icon-fa { font-size: 1.4rem; }
+        .text-male { color: var(--blue); }
+        .text-female { color: var(--pink); }
+        .text-both {
+            background: linear-gradient(to left, var(--blue) 50%, var(--pink) 50%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            font-weight: 800;
+        }
+
+        /* Gender Styling */
+        .gender-male input:checked + label { background: var(--blue); color: white; border-color: var(--blue); }
+        .gender-male input:checked + label .text-male { color: white; }
+        .gender-female input:checked + label { background: var(--pink); color: white; border-color: var(--pink); }
+        .gender-female input:checked + label .text-female { color: white; }
+        .gender-both input:checked + label { background: linear-gradient(45deg, var(--blue), var(--pink)); color: white; border-color: var(--pink); }
+        .gender-both input:checked + label .text-both { -webkit-text-fill-color: white; }
+
+        /* Status Styling */
+        .status-occupied input:checked + label { background: var(--success); color: white; border-color: var(--success); }
+        .status-occupied input:checked + label .label-occupied { color: white; }
+        .status-vacant input:checked + label { background: var(--danger); color: white; border-color: var(--danger); }
+        .status-vacant input:checked + label .label-vacant { color: white; }
+        .status-maint input:checked + label { background: var(--warning); color: white; border-color: var(--warning); }
+        .status-maint input:checked + label .label-maint { color: white; }
+
+        /* Maint Styling */
+        .maint-yes input:checked + label { background: var(--danger); color: white; border-color: var(--danger); }
+        .maint-yes input:checked + label .label-yes { color: white; }
+        .maint-no input:checked + label { background: var(--success); color: white; border-color: var(--success); }
+        .maint-no input:checked + label .label-no { color: white; }
+
+        .label-vacant { color: var(--danger); font-weight: 800; }
+        .label-occupied { color: var(--success); font-weight: 800; }
+        .label-maint { color: var(--warning); font-weight: 800; }
+        .label-yes { color: var(--danger); font-weight: 800; }
+        .label-no { color: var(--success); font-weight: 800; }
+
+        .emp-input-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .emp-input-row input { flex: 1; min-width: 150px; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            align-items: center; justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white; padding: 25px; border-radius: 20px;
+            width: 90%; max-width: 500px; text-align: center; position: relative;
+        }
+
+        #reader { width: 100%; border-radius: 12px; overflow: hidden; margin-top: 15px; }
+
+        .btn {
+            padding: 14px 25px; border: none; border-radius: 10px;
+            cursor: pointer; font-weight: 700; transition: all 0.3s;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        }
+
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-warning { background: var(--warning); color: white; }
+
+        .hidden { display: none; }
+
+        table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+        th { padding: 12px; text-align: center; color: #636e72; }
+        td { padding: 12px; text-align: center; background: #f8f9fa; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+        td:first-child { border-right: 1px solid var(--border); border-radius: 0 10px 10px 0; }
+        td:last-child { border-left: 1px solid var(--border); border-radius: 10px 0 0 10px; }
+
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .main-card { padding: 20px; }
+            .card-header { flex-direction: column; align-items: flex-start; }
+            .header-info { margin-top: 15px; }
+            .badge-item { font-size: 0.9rem; }
+            .date-text { font-size: 0.9rem; }
+            .emp-input-row input { min-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>نظام إدارة المرافق الذكي</h1>
+
+        <!-- معلومات العملية -->
+        <div class="main-card">
+            <div class="card-header">
+                <h2 class="card-title"><i class="fas fa-clipboard-list"></i> معلومات الطلب</h2>
+                <div class="header-info">
+                    <span id="requestIDDisplay" class="badge-item">رقم الطلب: A1B2C3D4</span>
+                    <span id="entryDateDisplay" class="date-text">2026-01-02</span>
+                </div>
+            </div>
+
+            <div class="grid">
+                <!-- كود المرفق -->
+                <div class="form-group">
+                    <label for="facilityCode">كود المرفق</label>
+                    <div class="input-with-icon">
+                        <input type="text" id="facilityCode" list="facilityCodes" placeholder="أدخل أو امسح كود المرفق" onchange="parseCode(this.value)">
+                        <datalist id="facilityCodes">
+                            <option value="QU-UC-A1-L2-R-2213">
+                            <option value="QU-UC-A1-BS-R-001">
+                            <option value="QU-UC-A1-L1-R-105">
+                            <option value="QU-UC-A1-L3-R-302">
+                        </datalist>
+                        <div class="qr-icon-btn" onclick="openScanner()">
+                            <i class="fas fa-qrcode"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- نوع المرفق -->
+                <div class="form-group">
+                    <label for="facilityType">نوع المرفق</label>
+                    <select id="facilityType" onchange="toggleDynamicFields()">
+                        <option value="">-- اختر النوع --</option>
+                        <option value="غرفة إدارية">غرفة إدارية</option>
+                        <option value="قاعة دراسية">قاعة دراسية</option>
+                        <option value="معمل">معمل</option>
+                        <option value="مسرح">مسرح</option>
+                    </select>
+                </div>
+
+                <!-- المبنى -->
+                <div class="form-group">
+                    <label for="building">المبنى</label>
+                    <input type="text" id="building" placeholder="يتم تعبئته تلقائياً" readonly>
+                </div>
+
+                <!-- الدور -->
+                <div class="form-group">
+                    <label for="floor">الدور</label>
+                    <input type="text" id="floor" placeholder="يتم تعبئته تلقائياً" readonly>
+                </div>
+
+                <!-- المدينة (مخفي) -->
+                <input type="hidden" id="city">
+                <!-- النطاق (مخفي) -->
+                <input type="hidden" id="region">
+
+                <!-- حقول إدارية (ديناميكية) -->
+                <div id="adminFields" class="form-group hidden">
+                    <label for="officeCount">عدد المكاتب</label>
+                    <input type="number" id="officeCount" value="0" min="0">
+                </div>
+
+                <!-- حقول تعليمية (ديناميكية) -->
+                <div id="classroomFields" class="form-group hidden">
+                    <label for="seatCount">عدد المقاعد</label>
+                    <input type="number" id="seatCount" value="0" min="0">
+                </div>
+            </div>
+        </div>
+
+        <!-- تفاصيل المرفق -->
+        <div class="main-card">
+            <div class="card-header">
+                <h2 class="card-title"><i class="fas fa-info-circle"></i> تفاصيل المرفق</h2>
+            </div>
+
+            <div class="grid">
+                <!-- الجهة -->
+                <div class="form-group">
+                    <label for="entity">الجهة</label>
+                    <select id="entity">
+                        <option value="">-- اختر الجهة --</option>
+                        <option value="8d9efdfb">رئيس الجامعة</option>
+                        <option value="D6DDE12D">وكالة الجامعة للشؤون المالية والفنية</option>
+                        <option value="4EE02757">وكالة الجامعة للدراسات العليا والبحث العلمي</option>
+                        <option value="6ADA6562">وكالة الجامعة للشؤون التعليمية</option>
+                        <option value="B9FE8A06">وكالة الجامعة لتطوير الاعمال والشراكة المجتمعية</option>
+                        <option value="B6FC4B93">أمانة مجلس الجامعة</option>
+                        <option value="469DC874">عمادة القبول والتسجيل</option>
+                        <option value="46CF48B5">عمادة شؤون الطلاب</option>
+                        <option value="230DC68E">عمادة الدراسات العليا والبحث العلمي</option>
+                        <option value="BDBFF8E2">عمادة التعلم الإلكتروني وتقنية المعلومات</option>
+                        <option value="D765D9F3">عمادة التطوير والجودة</option>
+                        <option value="09F4AB59">معهد الدراسات والخدمات الاستشارية</option>
+                        <option value="61DE9036">أمانة المجلس العلمي</option>
+                        <option value="C4FAACE7">كلية طب الأسنان</option>
+                        <option value="6DB3846A">كلية الزراعة والأغذية</option>
+                        <option value="C74A074F">كلية الطب البيطري</option>
+                        <option value="6F0192AF">كلية الحاسب</option>
+                        <option value="7CB0F832">كلية الهندسة</option>
+                        <option value="F298803F">كليه الصيدلة</option>
+                        <option value="C51B1E2B">كلية الطب</option>
+                        <option value="8687B5C1">كلية العلوم</option>
+                        <option value="E91574F6">كلية التربية</option>
+                        <option value="30618BB1">كلية التمريض</option>
+                        <option value="A5AD6BED">كلية العمارة والتخطيط</option>
+                        <option value="4623D484">كلية الأعمال والاقتصاد</option>
+                        <option value="E8CDBBC0">كلية الشريعة</option>
+                        <option value="8EEDB24C">كلية اللغات والعلوم الإنسانية</option>
+                        <option value="CE7F2C0A">كلية الفنون والتصاميم</option>
+                        <option value="5EFEE0F8">كلية العلوم الطبية التطبيقية</option>
+                        <option value="43F336AE">الكلية التطبيقية</option>
+                        <option value="f465d39b">المدينة الطبية</option>
+                        <option value="044a7587">الإدارة العامة للمكتبات ومصادر المعرفة</option>
+                        <option value="6D8C98DD">الإدارة العامة للمشاريع</option>
+                        <option value="F5F8AA07">الإدارة العامة للشؤون القانونية</option>
+                        <option value="60B1CB8C">الإدارة العامة للمرافق والإسكان</option>
+                        <option value="2C2692E4">الإدارة العامة للشؤون المالية</option>
+                        <option value="167B1F87">الإدارة العامة للمراجعة الداخلية</option>
+                        <option value="CDC937F9">الإدارة العامة للشراكة المجتمعية</option>
+                        <option value="2E379B74">الإدارة العامة للموارد البشرية</option>
+                        <option value="AD01C636">المستشفى البيطري</option>
+                        <option value="2B209218">إدارة محطة الأبحاث و التجارب</option>
+                        <option value="C292AFAE">أمانة الكراسي البحثية</option>
+                        <option value="d7f0f92a">إدارة الخدمات</option>
+                        <option value="1abbe223">إدارة التجهيزات والمستودعات</option>
+                        <option value="167b9df5">إدارة العلاقات العامة وخدمات المستفيدين</option>
+                        <option value="5ddbadaa">إدارة التشغيل والصيانة</option>
+                        <option value="3b01ebf8">إدارة النقل</option>
+                        <option value="e4e1d0e3">إدارة السلامة والمخاطر</option>
+                        <option value="3F503369">إدارة الموازنة والتخطيط المالي</option>
+                        <option value="98B8E235">إدارة الاعلام والاتصال</option>
+                        <option value="2E40BCE9">إدارة الاستثمار</option>
+                        <option value="D68B023C">إدارة الأمن الجامعي</option>
+                        <option value="2B076007">إدارة الاتصالات الإدارية</option>
+                        <option value="5CD6139D">إدارة التخطيط الاستراتيجي</option>
+                        <option value="B86921BF">إدارة العقود والمنافسات</option>
+                        <option value="41D359A1">إدارة البرامج والخطط</option>
+                        <option value="64044F15">إدارة التغذية</option>
+                        <option value="63A30151">إدارة الاحتياج التعليمي</option>
+                        <option value="0C9A731F">إدارة المناسبات والاحتفالات</option>
+                        <option value="65867A59">إدارة خدمات ذوي الإعاقة</option>
+                        <option value="FFF1A53E">إدارة شؤون الطلاب الدوليين</option>
+                        <option value="FE8F9BFB">إدارة المعامل و المختبرات</option>
+                        <option value="6BA124FB">إدارة النشر والترجمة</option>
+                        <option value="F3737210">إدارة شؤون الأوقاف</option>
+                        <option value="749F2ECB">إدارة الامن السبراني</option>
+                        <option value="EF513CD9">أمانة جائزة جامعة القصيم</option>
+                        <option value="40BB9C42">مدرسة تعليم القيادة</option>
+                        <option value="ADD995CA">إدارة الجمعيات والمجلات العلمية</option>
+                        <option value="CEE4CE94">إدارة التبادل المعرفي والفعاليات العلمية</option>
+                        <option value="2990DF1E">إدارة الابتعاث والتدريب</option>
+                        <option value="8ed1ff0f">إدارة الخريجين</option>
+                        <option value="65A2BFCB">إدارة الإيرادات البديلة</option>
+                        <option value="ED0877D8">مكتب تحقيق الرؤية</option>
+                        <option value="6FDBCD58">مكتب إدارة البيانات</option>
+                        <option value="122A3E63">وحدة التحكم والمراقبة</option>
+                        <option value="7F437223">وحدة التواصل الحكومي</option>
+                        <option value="D1F72189">وحدة خدمات الويب</option>
+                        <option value="0ED7B98C">وحدة التوعية الفكرية</option>
+                        <option value="D0323EA9">وحدة مراقبة المخزون</option>
+                        <option value="6EA03F53">وحدة الحوكمة المؤسسية</option>
+                        <option value="2B260D7C">وحدة متابعة العملية التعليمية</option>
+                        <option value="E6860185">وحدة التدريب التعاوني وطلاب الامتياز</option>
+                        <option value="C20E941B">وحدة التوطين والإستقطاب</option>
+                        <option value="2E48280E">وحدة المعيدين والمحاضرين</option>
+                        <option value="090191A3">وحدة التصنيف والتميز المؤسسي</option>
+                        <option value="00EF17D1">مركز التنمية المستدامة</option>
+                        <option value="3FB6AF1E">مركز الابتكار والملكية الفكرية</option>
+                        <option value="47587874">مركز الوثائق و المحفوظات</option>
+                        <option value="05B4513F">مركز التعاون الدولي والتبادل المعرفي</option>
+                        <option value="79345B55">عمادة الخدمات التعليمية (برنامج السنة التحضيرية)</option>
+                        <option value="4C2C5D34">كلية التأهيل الطبي</option>
+                        <option value="E9ADA0E8">كلية الصحة العامة والمعلوماتية الصحية</option>
+                        <option value="CFD06A1E">كلية العلوم الصحية التطبيقية بالرس</option>
+                        <option value="450ABBC2">كلية الهندسة بعنيزة</option>
+                        <option value="41DE5CC1">كلية العلوم والآداب بالمذنب</option>
+                        <option value="BDCA2898">كلية العلوم والآداب بعقلة الصقور</option>
+                        <option value="6CF6D325">كلية العلوم والآداب بالنبهانية</option>
+                        <option value="E66CDE36">كلية الصيدلة بعنيزة</option>
+                        <option value="E185C853">كلية العلوم والآداب بالبدائع</option>
+                        <option value="D0B76835">كلية العلوم والآداب بالأسياح</option>
+                        <option value="F4F3D9D5">كلية العلوم والآداب برياض الخبراء</option>
+                        <option value="B79B2D1C">كلية العلوم والآداب بعنيزة</option>
+                        <option value="FE936759">كلية العلوم والآداب بالرس</option>
+                        <option value="FB3D458A">كلية الطب والعلوم الطبية بعنيزة</option>
+                        <option value="0933c303">كلية العلوم والاداب بالبكيرية</option>
+                        <option value="E25AC7B4">كلية العلوم والآداب ببريدة</option>
+                        <option value="40DAB994">كلية إدارة الأعمال بالرس</option>
+                        <option value="EF6181F4">كلية العلوم والآداب بضرية</option>
+                        <option value="ec6ee99e">مقر جامعة القصيم بالرس</option>
+                        <option value="3b1400c4">المدينة الطبية</option>
+                        <option value="ff335f17">القيادات والقدرات</option>
+                        <option value="271fcf34">المتشاريين</option>
+                        <option value="f5fd3f42">الاستشاريين</option>
+                        <option value="e96f676b">وكيل الجامعة لشؤون التعليمية</option>
+                        <option value="ba79e764">الإدارة العامة للشؤون القانونية</option>
+                        <option value="49810fc3">الادارة العامة للمراجعة الداخلية</option>
+                    </select>
+                </div>
+
+                <!-- القسم -->
+                <div class="form-group">
+                    <label for="department">القسم</label>
+                    <input type="text" id="department" placeholder="القسم المسؤول">
+                </div>
+            </div>
+
+            <div class="options-row">
+                <!-- الحجم -->
+                <div class="sub-card">
+                    <div class="sub-card-title">الحجم</div>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="size-large" name="size" value="كبير">
+                            <label for="size-large">كبير</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="size-medium" name="size" value="متوسط">
+                            <label for="size-medium">متوسط</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="size-small" name="size" value="صغير">
+                            <label for="size-small">صغير</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- الجنس -->
+                <div class="sub-card">
+                    <div class="sub-card-title">الجنس</div>
+                    <div class="radio-group">
+                        <div class="radio-item gender-male">
+                            <input type="radio" id="gender-male" name="gender" value="طلاب">
+                            <label for="gender-male"><i class="fas fa-mars icon-fa text-male"></i> طلاب</label>
+                        </div>
+                        <div class="radio-item gender-female">
+                            <input type="radio" id="gender-female" name="gender" value="طالبات">
+                            <label for="gender-female"><i class="fas fa-venus icon-fa text-female"></i> طالبات</label>
+                        </div>
+                        <div class="radio-item gender-both">
+                            <input type="radio" id="gender-both" name="gender" value="كلاهما">
+                            <label for="gender-both">
+                                <div style="display: flex; gap: 4px; align-items: center;">
+                                    <i class="fas fa-mars icon-fa text-male"></i>
+                                    <i class="fas fa-venus icon-fa text-female"></i>
+                                </div>
+                                <span class="text-both">كلاهما</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- حالة المرفق -->
+                <div class="sub-card">
+                    <div class="sub-card-title">حالة المرفق</div>
+                    <div class="radio-group">
+                        <div class="radio-item status-occupied">
+                            <input type="radio" id="status-occupied" name="status" value="مشغول">
+                            <label for="status-occupied"><i class="fas fa-check-circle icon-fa label-occupied"></i> <span class="label-occupied">مشغول</span></label>
+                        </div>
+                        <div class="radio-item status-vacant">
+                            <input type="radio" id="status-vacant" name="status" value="شاغر">
+                            <label for="status-vacant"><i class="fas fa-times-circle icon-fa label-vacant"></i> <span class="label-vacant">شاغر</span></label>
+                        </div>
+                        <div class="radio-item status-maint">
+                            <input type="radio" id="status-maint" name="status" value="تحت الصيانة">
+                            <label for="status-maint"><i class="fas fa-tools icon-fa label-maint"></i> <span class="label-maint">تحت الصيانة</span></label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- يحتاج صيانة أو تعديل -->
+                <div class="sub-card">
+                    <div class="sub-card-title">يحتاج صيانة أو تعديل</div>
+                    <div class="radio-group">
+                        <div class="radio-item maint-yes">
+                            <input type="radio" id="maint-yes" name="needsMaint" value="نعم">
+                            <label for="maint-yes"><i class="fas fa-exclamation-triangle icon-fa label-yes"></i> <span class="label-yes">نعم</span></label>
+                        </div>
+                        <div class="radio-item maint-no">
+                            <input type="radio" id="maint-no" name="needsMaint" value="لا">
+                            <label for="maint-no"><i class="fas fa-thumbs-up icon-fa label-no"></i> <span class="label-no">لا</span></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ملاحظات -->
+        <div class="main-card">
+            <div class="card-header">
+                <h2 class="card-title"><i class="fas fa-comment-dots"></i> ملاحظات</h2>
+            </div>
+            <div class="form-group">
+                <textarea id="notes" rows="4" placeholder="أضف أي ملاحظات إضافية هنا..."></textarea>
+            </div>
+        </div>
+
+        <!-- إدارة الموظفين -->
+        <div class="main-card">
+            <div class="card-header">
+                <h2 class="card-title"><i class="fas fa-users"></i> إدارة الموظفين</h2>
+            </div>
+
+            <div class="emp-input-row">
+                <input type="text" id="empName" placeholder="اسم المستخدم">
+                <input type="text" id="empID" placeholder="الرقم الوظيفي">
+                <input type="text" id="empTitle" placeholder="مسمى الوظيفة">
+                <input type="text" id="empDept" placeholder="وحدة العمل">
+                <input type="text" id="empExt" placeholder="الهاتف">
+                <button class="btn btn-primary" onclick="addEmployee()" style="flex-grow: 0; min-width: 100px;"><i class="fas fa-plus"></i> إضافة</button>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table id="employeeTable">
+                    <thead>
+                        <tr>
+                            <th>اسم المستخدم</th>
+                            <th>الرقم الوظيفي</th>
+                            <th>مسمى الوظيفة</th>
+                            <th>وحدة العمل</th>
+                            <th>الهاتف</th>
+                            <th>إجراء</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button id="saveBtn" class="btn btn-success" onclick="saveAllData()">
+                <i class="fas fa-save"></i> حفظ وإرسال البيانات
+            </button>
+        </div>
+    </div>
+
+    <div id="scannerModal" class="modal">
+        <div class="modal-content">
+            <h3>مسح كود المرفق</h3>
+            <div id="reader"></div>
+            <button class="btn btn-danger" onclick="closeScanner()" style="margin-top: 15px;">إغلاق</button>
+        </div>
+    </div>
+
+    <script>
+        // الرابط المخفي لـ Power Automate
+        const HIDDEN_WEBHOOK_URL = "https://defaultc2b04da6848741cc880390321048a7.72.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/9eb76f0031ea443ba4dd4de0704062b7/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=YcjDUv7UrwcXy101wlZS4Q3ltVWm9yzEUCHy-Ez9lAY";
+
+        let html5QrcodeScanner = null;
+        let currentRequestID = '';
+        let employees = [];
+
+        window.onload = function() {
+            currentRequestID = generateRequestID();
+            document.getElementById('requestIDDisplay').innerText = "رقم الطلب: " + currentRequestID;
+            const today = new Date();
+            document.getElementById('entryDateDisplay').innerText = today.toISOString().split('T')[0];
+            toggleDynamicFields();
+        };
+
+        function openScanner() {
+            document.getElementById('scannerModal').style.display = 'flex';
+            if (!html5QrcodeScanner) html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
+            html5QrcodeScanner.render(onScanSuccess);
+        }
+
+        function closeScanner() {
+            document.getElementById('scannerModal').style.display = 'none';
+            if (html5QrcodeScanner) html5QrcodeScanner.clear();
+        }
+
+        function onScanSuccess(decodedText) {
+            document.getElementById('facilityCode').value = decodedText;
+            parseCode(decodedText);
+            closeScanner();
+        }
+
+        // قاموس الربط: مبنى -> مدينة -> نطاق (تم توليده من البيانات المرفقة)
+        const buildingData = {
+            'QU-UC-A1': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-A13': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-A14': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-C2': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-A15': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-A16-P1': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-A16-P2': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-A16-P3': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-A16-P4': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-A2': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-A3': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-A4': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-A5': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-A6': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-A7': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-C1': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-D-VIP': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-E1': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-E2': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-E3': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-E4': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-E5': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-E6': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-EX1': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-EX2': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-F10': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-F2': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-F3': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-F5': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-F6': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-F7': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-GS': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-S2': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-S3': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-S7': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-NR-C02': { city: 'بريدة', region: 'الشمالي' },
+            'QU-NR-C03-A': { city: 'بريدة', region: 'الشمالي' },
+            'QU-NR-C03-B': { city: 'بريدة', region: 'الشمالي' },
+            'QU-NR-C03-C': { city: 'بريدة', region: 'الشمالي' },
+            'QU-NR-C03-D': { city: 'بريدة', region: 'الشمالي' },
+            'QU-NR-C03-E': { city: 'بريدة', region: 'الشمالي' },
+            'QU-NR-C03-H': { city: 'بريدة', region: 'الشمالي' },
+            'QU-NR-C09-B1': { city: 'الأسياح', region: 'الشمالي' },
+            'QU-NR-C11': { city: 'البكيرية', region: 'الشمالي' },
+            'QU-NR-C12': { city: 'البكيرية', region: 'الشمالي' },
+            'QU-SR-S01-B1': { city: 'عنيزة', region: 'الجنوبي' },
+            'QU-SR-S01-B2': { city: 'عنيزة', region: 'الجنوبي' },
+            'QU-SR-S01-B3': { city: 'عنيزة', region: 'الجنوبي' },
+            'QU-SR-S02-B1': { city: 'عنيزة', region: 'الجنوبي' },
+            'QU-SR-S02-B2': { city: 'عنيزة', region: 'الجنوبي' },
+            'QU-SR-S02-B3': { city: 'عنيزة', region: 'الجنوبي' },
+            'QU-SR-S02-B4': { city: 'عنيزة', region: 'الجنوبي' },
+            'QU-SR-S02-B5': { city: 'عنيزة', region: 'الجنوبي' },
+            'QU-SR-S02-B6': { city: 'عنيزة', region: 'الجنوبي' },
+            'QU-SR-S06-B1': { city: 'المذنب', region: 'الجنوبي' },
+            'QU-SR-S07-B1': { city: 'عنيزة', region: 'الجنوبي' },
+            'QU-SR-S07-B2': { city: 'عنيزة', region: 'الجنوبي' },
+            'QU-SR-S07-B3': { city: 'عنيزة', region: 'الجنوبي' },
+            'QU-SR-S07-B4': { city: 'عنيزة', region: 'الجنوبي' },
+            'QU-SR-S08': { city: 'عنيزة', region: 'الجنوبي' },
+            'QU-SR-S09': { city: 'البدائع', region: 'الجنوبي' },
+            'QU-SR-S10-B1': { city: 'المذنب', region: 'الجنوبي' },
+            'QU-SR-S10-B2': { city: 'المذنب', region: 'الجنوبي' },
+            'QU-SR-S10-B3': { city: 'المذنب', region: 'الجنوبي' },
+            'QU-SR-S10-B4': { city: 'المذنب', region: 'الجنوبي' },
+            'QU-WR-W01': { city: 'الرس', region: 'الغربي' },
+            'QU-WR-W02-B1': { city: 'الرس', region: 'الغربي' },
+            'QU-WR-W02-B2': { city: 'الرس', region: 'الغربي' },
+            'QU-WR-W02-B3': { city: 'الرس', region: 'الغربي' },
+            'QU-WR-W02-B4': { city: 'الرس', region: 'الغربي' },
+            'QU-WR-W02-B5': { city: 'الرس', region: 'الغربي' },
+            'QU-WR-W02-B6': { city: 'الرس', region: 'الغربي' },
+            'QU-WR-W02-B7': { city: 'الرس', region: 'الغربي' },
+            'QU-WR-W02-B8': { city: 'الرس', region: 'الغربي' },
+            'QU-WR-W02-B9': { city: 'الرس', region: 'الغربي' },
+            'QU-WR-W02-D': { city: 'الرس', region: 'الغربي' },
+            'QU-WR-W02-GA': { city: 'الرس', region: 'الغربي' },
+            'QU-WR-W02-GB': { city: 'الرس', region: 'الغربي' },
+            'QU-WR-W02-GE': { city: 'الرس', region: 'الغربي' },
+            'QU-WR-W02-GS': { city: 'الرس', region: 'الغربي' },
+            'QU-WR-W02-GT': { city: 'الرس', region: 'الغربي' },
+            'QU-WR-W02-MOSQUE': { city: 'الرس', region: 'الغربي' },
+            'QU-WR-W02-S': { city: 'الرس', region: 'الغربي' },
+            'QU-WR-W02-WT': { city: 'الرس', region: 'الغربي' },
+            'QU-WR-W03': { city: 'الرس', region: 'الغربي' },
+            'QU-WR-W04': { city: 'الرس', region: 'الغربي' },
+            'QU-WR-W05': { city: 'الرس', region: 'الغربي' },
+            'QU-WR-W06': { city: 'رياض الخبراء', region: 'الغربي' },
+            'QU-WR-W07': { city: 'ضرية', region: 'الغربي' },
+            'QU-WR-W08': { city: 'النبهانية', region: 'الغربي' },
+            'QU-WR-W09': { city: 'عقلة الصقور', region: 'الغربي' },
+            'QU-WR-W10-B1': { city: 'عقلة الصقور', region: 'الغربي' },
+            'QU-WR-W10-B2': { city: 'عقلة الصقور', region: 'الغربي' },
+            'QU-WR-W11-B1': { city: 'الرس', region: 'الغربي' },
+            'QU-WR-W11-B2': { city: 'الرس', region: 'الغربي' },
+            'QU-WR-W12': { city: 'الرس', region: 'الغربي' },
+            'QU-UC-MC': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-G6': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-G5': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-G4': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-G3': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-G2': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-G1': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-G7': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-G8': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-G-CAMP': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-G9': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-G10': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-G11': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-G12': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-G-MOSQUE': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-G13': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-G14': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-G15': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-G16': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-B4': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-F8': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-E9-CAMP': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-B2': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-SR-S06': { city: 'المذنب', region: 'الجنوبي' },
+            'QU-UC-A16-P5': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-B21': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-B22': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-B23': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-B24': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-B25': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-B26': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-B27': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-B28': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-B29': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-B30': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-B31': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-DP': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-GR': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-G-SERVICES': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-IW': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-LS': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-PRK': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-RW': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-SG': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-SMG': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-SS': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-ST': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-G-CAFETERIA': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-SR-TEMP1': { city: 'عنيزة', region: 'الجنوبي' },
+            'QU-SR-TEMP2': { city: 'عنيزة', region: 'الجنوبي' },
+            'QU-SR-TEMP3': { city: 'عنيزة', region: 'الجنوبي' },
+            'QU-UC-A16-P6': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-B5': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-SD': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-S4': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-MC-B1': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-NR-C01': { city: 'بريدة', region: 'الشمالي' },
+            'QU-UC-F11': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-A16-MOSQUE': { city: 'بريدة', region: 'الرئيسي' },
+            'QU-UC-B3': { city: 'بريدة', region: 'الرئيسي' }
+        };
+
+        function parseCode(code) {
+            if (!code) return;
+            const parts = code.split('-');
+            const buildingCode = parts.slice(0, 3).join('-');
+            document.getElementById('building').value = buildingCode;
+
+            // تحديث المدينة والنطاق تلقائياً بناءً على المبنى
+            if (buildingData[buildingCode]) {
+                document.getElementById('city').value = buildingData[buildingCode].city;
+                document.getElementById('region').value = buildingData[buildingCode].region;
+            }
+
+            let floorName = "غير محدد";
+            if (code.includes("-L-1") || code.includes("-LG")) floorName = "الأرضي";
+            else if (code.includes("-L-2") || code.includes("-L1")) floorName = "الأول";
+            else if (code.includes("-L-3") || code.includes("-L2")) floorName = "الثاني";
+            else if (code.includes("-L-4") || code.includes("-L3")) floorName = "الثالث";
+            else if (code.includes("-L-5") || code.includes("-L4")) floorName = "الرابع";
+            else if (code.includes("-L-6") || code.includes("-L5")) floorName = "الخامس";
+            else if (code.includes("-L-7") || code.includes("-L6")) floorName = "السادس";
+            else if (code.includes("-BS")) floorName = "القبو";
+            else if (code.includes("-L7")) floorName = "السطح";
+            document.getElementById('floor').value = floorName;
+        }
+
+        function toggleDynamicFields() {
+            const type = document.getElementById('facilityType').value;
+            document.getElementById('adminFields').classList.toggle('hidden', type !== 'غرفة إدارية');
+            const showSeatCount = (type === 'قاعة دراسية' || type === 'معمل' || type === 'مسرح');
+            document.getElementById('classroomFields').classList.toggle('hidden', !showSeatCount);
+        }
+
+        function addEmployee() {
+            const fields = ['empName', 'empID', 'empTitle', 'empDept', 'empExt'];
+            const values = fields.map(id => document.getElementById(id).value);
+            if (!values[0] || !values[1]) { alert("يرجى إدخال اسم المستخدم والرقم الوظيفي"); return; }
+            const recordID = generateRequestID();
+            const empObj = {
+                "اسم المستخدم": values[0],
+                "الرقم الوظيفي": values[1],
+                "مسمى الوظيفة": values[2],
+                "وحدة العمل": values[3],
+                "الهاتف": values[4],
+                "key": recordID,
+                "المرفق": currentRequestID,
+                "مصدر الإدخال": "النموذج"
+            };
+            employees.push(empObj);
+            const table = document.getElementById('employeeTable').querySelector('tbody');
+            const row = table.insertRow();
+            values.forEach(val => row.insertCell().innerText = val);
+            row.insertCell().innerHTML = `<button class="btn btn-danger" style="padding: 5px 10px;" onclick="removeEmployee(this, '${recordID}')">حذف</button>`;
+            fields.forEach(id => document.getElementById(id).value = '');
+        }
+
+        function removeEmployee(btn, recordID) {
+            employees = employees.filter(e => e.key !== recordID);
+            btn.parentElement.parentElement.remove();
+        }
+
+        function generateRequestID() {
+            const chars = '0123456789ABCDEF';
+            let result = '';
+            for (let i = 0; i < 8; i++) result += chars.charAt(Math.floor(Math.random() * chars.length));
+            return result;
+        }
+
+        async function saveAllData() {
+            const genderEl = document.querySelector('input[name="gender"]:checked');
+            const statusEl = document.querySelector('input[name="status"]:checked');
+            const maintEl = document.querySelector('input[name="needsMaint"]:checked');
+            const sizeEl = document.querySelector('input[name="size"]:checked');
+            
+            const data = {
+                "key": currentRequestID,
+                "تاريخ الحصر": document.getElementById('entryDateDisplay').innerText,
+                "الكود": document.getElementById('facilityCode').value,
+                "المبنى": document.getElementById('building').value,
+                "الدور": document.getElementById('floor').value,
+                "المدينة": document.getElementById('city').value,
+                "النطاق": document.getElementById('region').value,
+                "نوع المرفق": document.getElementById('facilityType').value,
+                "عدد المكاتب": parseInt(document.getElementById('officeCount').value) || 0,
+                "عدد المقاعد": parseInt(document.getElementById('seatCount').value) || 0,
+                "الجهة": document.getElementById('entity').value,
+                "القسم": document.getElementById('department').value,
+                "الحجم": sizeEl ? sizeEl.value : '',
+                "الجنس": genderEl ? genderEl.value : '',
+                "حالة المرفق": statusEl ? statusEl.value : '',
+                "يحتاج تعديل": maintEl ? maintEl.value : '',
+                "مصدر الإدخال": "النموذج",
+                "ملاحظات": document.getElementById('notes').value,
+                "employees": employees
+            };
+
+            const saveBtn = document.getElementById('saveBtn');
+            saveBtn.disabled = true;
+            saveBtn.innerText = "⏳ جاري الإرسال...";
+
+            try {
+                const response = await fetch(HIDDEN_WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert("✅ تم إرسال البيانات بنجاح!");
+                    location.reload();
+                } else {
+                    throw new Error("فشل الإرسال");
+                }
+            } catch (error) {
+                alert("❌ حدث خطأ أثناء الإرسال. يرجى المحاولة مرة أخرى.");
+                saveBtn.disabled = false;
+                saveBtn.innerText = "💾 حفظ وإرسال البيانات";
+            }
+        }
+
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('scannerModal')) closeScanner();
+        }
+    </script>
+</body>
+</html>
