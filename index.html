@@ -325,7 +325,7 @@
 <body>
 
     <div class="container">
-        <h1>نظام إدارة المرافق الذكي</h1>
+        <h1>نظام توثيق المرافق</h1>
 
         <!-- معلومات العملية -->
         <div class="main-card">
@@ -562,18 +562,18 @@
                     <div class="radio-group">
                         <div class="radio-item gender-male">
                             <input type="radio" id="gender-male" name="gender" value="طلاب">
-                            <label for="gender-male"><i class="fas fa-mars icon-fa text-male"></i> طلاب</label>
+                            <label for="gender-male"><i class="fas fa-person icon-fa text-male"></i> طلاب</label>
                         </div>
                         <div class="radio-item gender-female">
                             <input type="radio" id="gender-female" name="gender" value="طالبات">
-                            <label for="gender-female"><i class="fas fa-venus icon-fa text-female"></i> طالبات</label>
+                            <label for="gender-female"><i class="fas fa-person-dress icon-fa text-female"></i> طالبات</label>
                         </div>
                         <div class="radio-item gender-both">
                             <input type="radio" id="gender-both" name="gender" value="كلاهما">
                             <label for="gender-both">
                                 <div style="display: flex; gap: 4px; align-items: center;">
-                                    <i class="fas fa-mars icon-fa text-male"></i>
-                                    <i class="fas fa-venus icon-fa text-female"></i>
+                                    <i class="fas fa-person icon-fa text-male"></i>
+                                <i class="fas fa-person-dress icon-fa text-female"></i>
                                 </div>
                                 <span class="text-both">كلاهما</span>
                             </label>
@@ -606,7 +606,7 @@
                     <div class="radio-group">
                         <div class="radio-item maint-yes">
                             <input type="radio" id="maint-yes" name="needsMaint" value="نعم">
-                            <label for="maint-yes"><i class="fas fa-exclamation-triangle icon-fa label-yes"></i> <span class="label-yes">نعم</span></label>
+                            <label for="maint-yes"><i class="fas fa-thumbs-down icon-fa label-yes"></i> <span class="label-yes">نعم</span></label>
                         </div>
                         <div class="radio-item maint-no">
                             <input type="radio" id="maint-no" name="needsMaint" value="لا">
@@ -675,7 +675,7 @@
     </div>
 
     <script>
-        // الرابط المخفي لـ Power Automate
+        
         const HIDDEN_WEBHOOK_URL = "https://defaultc2b04da6848741cc880390321048a7.72.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/9eb76f0031ea443ba4dd4de0704062b7/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=YcjDUv7UrwcXy101wlZS4Q3ltVWm9yzEUCHy-Ez9lAY";
 
         let html5QrcodeScanner = null;
@@ -692,8 +692,16 @@
 
         function openScanner() {
             document.getElementById('scannerModal').style.display = 'flex';
-            if (!html5QrcodeScanner) html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
-            html5QrcodeScanner.render(onScanSuccess);
+            if (!html5QrcodeScanner) {
+                html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
+                    fps: 10, 
+                    qrbox: 250,
+                    locale: "ar", // تعريب الواجهة
+                    videoConstraints: { facingMode: "environment" } // إجبار الكاميرا الخلفية
+                });
+            }
+            // إضافة دالة خطأ فارغة لتجنب المشاكل في بعض المتصفحات
+            html5QrcodeScanner.render(onScanSuccess, (errorMessage) => { /* console.log(errorMessage); */ });
         }
 
         function closeScanner() {
@@ -928,7 +936,7 @@
         }
 
         function generateRequestID() {
-            const chars = '0123456789ABCDEF';
+            const chars = '0123456789ABCDF';
             let result = '';
             for (let i = 0; i < 8; i++) result += chars.charAt(Math.floor(Math.random() * chars.length));
             return result;
