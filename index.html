@@ -321,7 +321,27 @@
             .emp-input-row input { min-width: 100%; }
         }
 
-       
+       /* 1. إخفاء الأزرار التقنية المزعجة فقط */
+#reader__dashboard_section_swaplink, /* زر تبديل الكاميرا */
+#reader__dashboard_section_csr,      /* زر اختيار ملف */
+#reader__dashboard_section_stop,     /* زر إيقاف المسح */
+#reader__camera_selection            /* قائمة اختيار الكاميرا */
+{
+    display: none !important;
+}
+
+/* 2. استثناء زر طلب التصريح وضمان ظهوره بشكل واضح */
+#reader__dashboard_section_permission_button {
+    display: inline-block !important; /* إجبار الظهور */
+    background-color: #28a745 !important; /* لون أخضر ليكون واضحاً */
+    color: white !important;
+    padding: 10px 20px !important;
+    border-radius: 5px !important;
+    border: none !important;
+    cursor: pointer !important;
+    margin: 20px auto !important;
+}
+
     </style>
 </head>
 <body>
